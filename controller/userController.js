@@ -30,8 +30,9 @@ async function registerUser(req, res, next) {
       });
     }
     const nameList = name.split(" ");
+    const firstName = nameList.slice(0, -1).join(" ");
     const lastName = nameList[nameList.length - 1];
-    const data = await User.create({ name, email, password, lastName });
+    const data = await User.create({ firstName, email, password, lastName });
     data.password = undefined;
     const token = await data.createJWT();
     return res.status(StatusCodes.CREATED).json({ data, token });
@@ -80,10 +81,9 @@ async function updateUser(req, res, next) {
         message: "Email Not Present",
       });
     }
-    const name = req.body.name + " " + req.body.lastName;
     const data = await User.findOneAndUpdate(
       { email: req.body.email },
-      { name },
+      { firstName: req.body.firstName, lastName: req.body.lastName },
       { new: true }
     );
     const token = await data.createJWT();

@@ -8,6 +8,7 @@ async function createJobs(req, res, next) {
       return next({ statusCode: 400, message: "Please provide all values" });
     }
     const body = { ...jobDetails, userId: id };
+    console.log(body);
     const data = await Job.create(body);
     res.status(200).json(data);
   } catch (error) {
@@ -28,10 +29,22 @@ async function getJobs(req, res) {
 
 async function deleteJobs(req, res) {
   try {
-    console.log(req.params);
+    const { id } = req.params;
+    const data = await Job.findByIdAndDelete(id);
+    res.status(200).json(data);
   } catch (error) {
     console.log(error);
   }
 }
 
-export { createJobs, getJobs, deleteJobs };
+async function getSingleJob(req, res) {
+  try {
+    const { id } = req.params;
+    const data = await Job.findById(id);
+    res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export { createJobs, getJobs, deleteJobs, getSingleJob };
