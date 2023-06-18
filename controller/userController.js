@@ -3,36 +3,30 @@ import { StatusCodes } from "http-status-codes";
 
 async function registerUser(req, res, next) {
   try {
+    // TODO: See the userModel (firstName is required)
     const { name, email, password, confirmPassword } = req.body;
     if (!name || !email || !password || !confirmPassword) {
-      return next({
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Please provide all values",
-      });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json("Please provide all details");
     }
     if (password !== confirmPassword) {
-      return next({
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Both password does not match",
-      });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json("Both passwords does not match");
     }
     if (password.length < 6) {
-      return next({
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Password length should be greater than 6",
-      });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json("Password length should be greater than 6");
     }
     const isUserAlreadyPresent = await User.findOne({ email });
     if (isUserAlreadyPresent) {
-      return next({
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Email Already Present. Please login",
-      });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json("Email Already Present. Please Login");
     }
-    const nameList = name.split(" ");
-    const firstName = nameList.slice(0, -1).join(" ");
-    const lastName = nameList[nameList.length - 1];
-    const data = await User.create({ firstName, email, password, lastName });
+    const data = await User.create({ name, email, password });
     data.password = undefined;
     const token = await data.createJWT();
     return res.status(StatusCodes.CREATED).json({ data, token });
