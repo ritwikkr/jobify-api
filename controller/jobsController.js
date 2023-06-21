@@ -8,7 +8,6 @@ async function createJobs(req, res, next) {
       return next({ statusCode: 400, message: "Please provide all values" });
     }
     const body = { ...jobDetails, userId: id };
-    console.log(body);
     const data = await Job.create(body);
     res.status(200).json(data);
   } catch (error) {
@@ -47,4 +46,12 @@ async function getSingleJob(req, res) {
   }
 }
 
-export { createJobs, getJobs, deleteJobs, getSingleJob };
+async function updateJob(req, res) {
+  try {
+    const {} = req.body;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export { createJobs, getJobs, deleteJobs, getSingleJob, updateJob };
